@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>UIC Xiaoyan</title>
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/styles.css" rel="stylesheet">
+
+
+</head>
+
+<body>
+
+			<div class="row">
+				<div style="position: fixed; margin: 0 auto; left: 0px; right: 0px; padding-left: 0px; padding-right: 0px;" class="col-xs-12 col-sm-8 col-md-6 col-lg-4">
+					<div style="margin-bottom: 0px;" class="panel panel-default chat">
+						<div class="panel-heading" id="accordion">UIC Xiaoyan Chatbot</div>
+						<div id="chat-body" class="panel-body">
+							<div class="row">
+								<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+									<div class="talk-bubble round tri-right left-in">
+									  <div class="talktext">
+									    欢迎使用UIC小言AI机器人!
+									  </div>
+									</div>
+								</div>
+							</div>
+
+						</div>
+
+
+					</div>
+				</div><!-- /.col-->
+			</div><!-- /.row -->
+			<div class="row">
+				<div class="col-xs-12 col-sm-8 col-md-6 col-lg-4">
+					<div class="footer navbar-fixed-bottom">
+						<div class="panel-footer">
+							<form id="chat">
+								<div class="input-group">
+									<input required id="question" type="text" name="question" class="form-control input-md" placeholder="Type your message here..." />
+									<span class="input-group-btn">
+										<button type="submit" class="btn btn-primary btn-md" id="btn-chat">Send</button>
+									</span>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+
+			<script src="js/jquery-3.2.1.min.js"></script>
+			<script src="js/bootstrap.js"></script>
+			<script src="js/mobile-chrome-vh-fix.js"></script>
+
+	<script>
+			$("form#chat").submit(function()
+			{
+
+			    var formData = new FormData(this);
+				var question = $('#question').val();
+				$('#question').val("");
+				$("#chat-body").append("<div class=\"row\"><div class=\"col-xs-12 col-sm-12 col-md-12 col-lg-12\"><div style=\"background-color: #9EEA6A;\" class=\"pull-right talk-bubble round tri-right right-in\"><div class=\"talktext\">" + question + "</div></div></div></div>");
+				$.ajax({
+						url: "http://127.0.0.1:5000/getResult",
+						type: 'POST',
+						data: formData,
+						success: function (response)
+						{
+							var answer = response;
+							answer = answer.replace(/"/g, "");
+							answer = answer.replace(/(?:\\[rn])+/g, "<br />");
+							$("#chat-body").append("<div class=\"row\"><div class=\"col-xs-12 col-sm-12 col-md-12 col-lg-12\"><div class=\"talk-bubble round tri-right left-in\"><div class=\"talktext\">" + answer + "</div></div></div></div>");
+							scrollSmoothToBottom("chat-body");
+						},
+						error: function (xhr, ajaxOptions, thrownError)
+						{
+							$("#chat-body").append("<div class=\"row\"><div class=\"col-xs-12 col-sm-12 col-md-12 col-lg-12\"><div class=\"talk-bubble round tri-right left-in\"><div class=\"talktext\">对不起，傻傻的小言听不懂</div></div></div></div>");
+							scrollSmoothToBottom("chat-body");
+						},
+						cache: false,
+						contentType: false,
+						processData: false
+					});
+						return false;
+					});
+
+	</script>
+	<script>
+	function scrollSmoothToBottom (id)
+	{
+   		var div = document.getElementById(id);
+   		$('#' + id).animate({
+      	scrollTop: div.scrollHeight - div.clientHeight
+   }, 500);
+}
+	</script>
+	<script>
+		$( "#question" ).focus(function() {
+  		scrollSmoothToBottom("chat-body");
+	});
+	</script>
+	<script>
+				function calcVH() {
+			    $('#chat-body').innerHeight( $(this).innerHeight() - 121.4 );
+			}
+			(function($) {
+			  calcVH();
+			  $(window).on('orientationchange', function() {
+			    calcVH();
+			  });
+			})(jQuery);
+	</script>
+
+
+</body>
+
+</html>
